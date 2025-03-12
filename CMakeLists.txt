@@ -1,3 +1,8 @@
+set(VERSION_ROS2 "ROS2" )
+set(VERSION_HUMBLE "humble" )
+set(ROS_EDITION ${VERSION_ROS2}  )
+set(HUMBLE_ROS ${ROS_HUMBLE} )
+
 # judge which cmake codes to use 
 if($ENV{ROS_VERSION} STREQUAL "1")
 
@@ -245,12 +250,15 @@ else($ENV{ROS_VERSION} STREQUAL "2")
     LIBRARY_NAME ${PROJECT_NAME}
   )
 
+
   ## make sure the livox_lidar_sdk_shared library is installed
-  find_library(LIVOX_LIDAR_SDK_LIBRARY liblivox_lidar_sdk_shared.so /usr/local/lib REQUIRED)
+  # find_library(LIVOX_LIDAR_SDK_LIBRARY liblivox_lidar_sdk_shared.so /usr/local/lib REQUIRED)
+  find_library(LIVOX_LIDAR_SDK_LIBRARY liblivox_lidar_sdk_shared.so ${livox_sdk2_DIR}/../../../lib REQUIRED)
 
   ##
   find_path(LIVOX_LIDAR_SDK_INCLUDE_DIR
     NAMES "livox_lidar_api.h" "livox_lidar_def.h"
+    PATHS liblivox_lidar_sdk_shared.so ${livox_sdk2_DIR}/../../../include
     REQUIRED)
 
   ## PCL library
@@ -297,7 +305,7 @@ else($ENV{ROS_VERSION} STREQUAL "2")
     ${PCL_INCLUDE_DIRS}
     ${APR_INCLUDE_DIRS}
     ${LIVOX_LIDAR_SDK_INCLUDE_DIR}
-    ${LIVOX_INTERFACES_INCLUDE_DIRECTORIES}   # for custom msgs
+    # ${LIVOX_INTERFACES_INCLUDE_DIRECTORIES}   # for custom msgs
     3rdparty
     src
   )
