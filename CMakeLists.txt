@@ -1,8 +1,3 @@
-set(VERSION_ROS2 "ROS2" )
-set(VERSION_HUMBLE "humble" )
-set(ROS_EDITION ${VERSION_ROS2}  )
-set(HUMBLE_ROS ${ROS_HUMBLE} )
-
 # judge which cmake codes to use 
 if($ENV{ROS_VERSION} STREQUAL "1")
 
@@ -26,11 +21,11 @@ if($ENV{ROS_VERSION} STREQUAL "1")
   #---------------------------------------------------------------------------------------
   # find package and the dependecy
   #---------------------------------------------------------------------------------------
-  find_package(Boost 1.54 REQUIRED COMPONENTS
-    system
-    thread
-    chrono
-  )
+  #find_package(Boost 1.54 REQUIRED COMPONENTS
+  #  system
+  #  thread
+  #  chrono
+  #)
 
   ## Find catkin macros and libraries
   ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -163,7 +158,7 @@ if($ENV{ROS_VERSION} STREQUAL "1")
   #---------------------------------------------------------------------------------------
   target_link_libraries(${PROJECT_NAME}_node
     ${LIVOX_LIDAR_SDK_LIBRARY}
-    ${Boost_LIBRARY}
+    #${Boost_LIBRARY}
     ${catkin_LIBRARIES}
     ${PCL_LIBRARIES}
     ${APR_LIBRARIES}
@@ -290,7 +285,7 @@ else($ENV{ROS_VERSION} STREQUAL "2")
   target_include_directories(${PROJECT_NAME} PRIVATE ${livox_sdk_INCLUDE_DIRS})
 
   # get include directories of custom msg headers
-  if($ENV{ROS_DISTRO} STREQUAL "foxy")
+  if($ENV{ROS_DISTRO} STREQUAL "foxy" OR $ENV{ROS_DISTRO} STREQUAL "galactic")
     set(LIVOX_INTERFACE_TARGET "${LIVOX_INTERFACES}__rosidl_typesupport_cpp")
     add_dependencies(${PROJECT_NAME} ${LIVOX_INTERFACES})
     get_target_property(LIVOX_INTERFACES_INCLUDE_DIRECTORIES ${LIVOX_INTERFACE_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
@@ -315,7 +310,7 @@ else($ENV{ROS_VERSION} STREQUAL "2")
     ${LIVOX_LIDAR_SDK_LIBRARY}
     ${LIVOX_INTERFACE_TARGET}   # for custom msgs
     ${PPT_LIBRARY}
-    ${Boost_LIBRARY}
+    #${Boost_LIBRARY}
     ${PCL_LIBRARIES}
     ${APR_LIBRARIES}
   )
