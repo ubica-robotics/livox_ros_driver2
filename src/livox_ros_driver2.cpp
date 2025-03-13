@@ -162,7 +162,7 @@ DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
   } else {
     combined_freq_ = combined_freq_;
   }
-  combined_freq_ = std::max(combined_freq_, publish_freq);
+  publish_freq = std::max(combined_freq_, publish_freq);
 
   future_ = exit_signal_.get_future();
 
