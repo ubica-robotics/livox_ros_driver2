@@ -83,6 +83,7 @@ class Lddc final {
 
   int RegisterLds(Lds *lds);
   void DistributePointCloudData(void);
+  void DistributeCombinedPointCloudData(void);
   void DistributeImuData(void);
   void CreateBagFile(const std::string &file_name);
   void PrepareExit(void);
@@ -109,9 +110,11 @@ class Lddc final {
 
   void InitPointcloud2MsgHeader(PointCloud2& cloud, const std::string& frame_id);
   void InitPointcloud2Msg(const StoragePacket& pkg, PointCloud2& cloud, uint64_t& timestamp, const std::string& frame_id);
+  void InitPointcloud2Msg(const std::vector<StoragePacket>& pkgs, PointCloud2& cloud, uint64_t& timestamp, const std::string& frame_id);
   void PublishPointcloud2Data(const uint8_t index, uint64_t timestamp, const PointCloud2& cloud);
 
   void InitCustomMsg(CustomMsg& livox_msg, const StoragePacket& pkg, uint8_t index, const std::string& frame_id);
+  void InitCustomMsg(CustomMsg& livox_msg, const std::vector<StoragePacket>& pkgs, const std::string& frame_id);
   void FillPointsToCustomMsg(CustomMsg& livox_msg, const StoragePacket& pkg);
   void PublishCustomPointData(const CustomMsg& livox_msg, const uint8_t index);
 

@@ -132,6 +132,7 @@ DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
   this->declare_parameter("multi_topic", 0);
   this->declare_parameter("data_src", data_src);
   this->declare_parameter("publish_freq", 10.0);
+  this->declare_parameter("combined_freq", 10.0);
   this->declare_parameter("output_data_type", output_type);
   this->declare_parameter("frame_id", "frame_default");
   this->declare_parameter("user_config_path", "path_default");
@@ -142,6 +143,7 @@ DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
   this->get_parameter("multi_topic", multi_topic);
   this->get_parameter("data_src", data_src);
   this->get_parameter("publish_freq", publish_freq);
+  this->get_parameter("combined_freq", combined_freq_);
   this->get_parameter("output_data_type", output_type);
   this->get_parameter("frame_id", frame_id);
 
@@ -152,6 +154,15 @@ DriverNode::DriverNode(const rclcpp::NodeOptions & node_options)
   } else {
     publish_freq = publish_freq;
   }
+  
+  if (combined_freq_ > 100.0) {
+    combined_freq_ = 100.0;
+  } else if (combined_freq_ < 0.5) {
+    combined_freq_ = 0.5;
+  } else {
+    combined_freq_ = combined_freq_;
+  }
+  combined_freq_ = std::max(combined_freq_, publish_freq);
 
   future_ = exit_signal_.get_future();
 
@@ -197,10 +208,19 @@ void DriverNode::PointCloudDataPollThread()
 {
   std::future_status status;
   std::this_thread::sleep_for(std::chrono::seconds(3));
-  do {
-    lddc_ptr_->DistributePointCloudData();
-    status = future_.wait_for(std::chrono::microseconds(0));
-  } while (status == std::future_status::timeout);
+  if (lddc_ptr_->IsMultiTopic()) {
+    do {
+      lddc_ptr_->DistributePointCloudData();
+      status = future_.wait_for(std::chrono::microseconds(0));
+    } while (status == std::future_status::timeout);
+  } else {
+    rclcpp::Rate rate(combined_freq_);
+    do {
+      lddc_ptr_->DistributeCombinedPointCloudData();
+      rate.sleep();
+      status = future_.wait_for(std::chrono::microseconds(0));
+    } while (status == std::future_status::timeout);
+  }
 }
 
 void DriverNode::ImuDataPollThread()
