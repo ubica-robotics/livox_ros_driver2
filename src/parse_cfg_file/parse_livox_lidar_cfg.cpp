@@ -98,6 +98,12 @@ bool LivoxLidarConfigParser::ParseUserConfigs(const rapidjson::Document &doc,
     } else {
       user_config.frame_id = static_cast<std::string>(config["frame_id"].GetString());
     }
+    if (!config.HasMember("enable_imu")) {
+      user_config.enable_imu = true;
+      std::cout << "Enable imu not given, set to default of 'true'" << std::endl;
+    } else {
+      user_config.enable_imu = config["enable_imu"].GetBool();
+    }
     
     if (!config.HasMember("extrinsic_parameter")) {
       memset(&user_config.extrinsic_param, 0, sizeof(user_config.extrinsic_param));

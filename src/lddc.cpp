@@ -131,7 +131,7 @@ void Lddc::DistributePointCloudData(void) {
     uint32_t lidar_id = i;
     LidarDevice *lidar = &lds_->lidars_[lidar_id];
     LidarDataQueue *p_queue = &lidar->data;
-    if ((kConnectStateSampling != lidar->connect_state) || (p_queue == nullptr)) {
+    if ((kConnectStateSampling != lidar->connect_state) || (p_queue == nullptr) || (!lidar->livox_config.enable_imu)) {
       continue;
     }
     PollingLidarPointCloudData(lidar_id, lidar);    
